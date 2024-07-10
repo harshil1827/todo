@@ -1,24 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import Navbar from "./components/Navbar";
+import Todo from "./components/Todo";
 
 function App() {
+  let initTodo;
+  if(localStorage.getItem("todos")===null){
+    initTodo=[];
+  }
+  else{
+    initTodo = JSON.parse(localStorage.getItem("todos"));
+  }
+
+  const [todos,settodos]=useState(initTodo);
+
+const addtodo = (title,desc)=>{
+  const myTodo = {
+    title:title,
+    desc:desc,
+  }
+  settodos([...todos,myTodo]);
+  localStorage.setItem("todos",JSON.stringify(todos));
+}
+
+const ondelete =(todo)=>{
+  settodos(todos.filter((e)=>{
+    return e!==todo;
+  }))
+  
+}
+useEffect(()=>{
+  localStorage.setItem("todos",JSON.stringify(todos));
+},[todos]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+    <Navbar/>
+    <Todo todos={todos} ondelete={ondelete} addtodo={addtodo}/>
+    </>
   );
 }
 
